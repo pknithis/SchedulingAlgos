@@ -1,0 +1,7 @@
+schedulingalgos.ProcessData
+schedulingalgos.SchedulingMethod
+schedulingalgos.MiniProcess
+schedulingalgos.SortProcess
+schedulingalgos.Scheduler
+schedulingalgos.ProcessController
+schedulingalgos.SchedulingAlgos
