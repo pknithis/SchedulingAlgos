@@ -7,6 +7,7 @@ package schedulingalgos;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,10 +36,13 @@ class SortProcess implements Comparator
 class Scheduler implements Runnable,SchedulingMethod{
     
     ArrayList <MiniProcess>processList;
-    
-    Scheduler(ArrayList processList)
+    int SCHEDULING_METHOD;
+    int slotTime;
+    Scheduler(ArrayList processList,int SCHEDULING_METHOD,int slotTime)
     {
         this.processList = processList;
+        this.SCHEDULING_METHOD = SCHEDULING_METHOD;
+        this.slotTime = slotTime;
     }
     
     public void SJFScheduling()
@@ -85,13 +89,13 @@ class Scheduler implements Runnable,SchedulingMethod{
         
     }
         
-    public void roudRobinScheduling()
+    public void RoudRobinScheduling()
     {
-     int slotTime = 2;
+     int slotTime = this.slotTime;
      int processFinishedCount = 0;
      int i = 0;
      
-     for(; processFinishedCount<processList.size()-1;i = (i+1)%processList.size())
+     for(; processFinishedCount<processList.size();i = (i+1)%processList.size())
      {
          int processTimeLimit = 0;
          System.out.println("Starting Thread:"+processList.get(i).toString());
@@ -130,8 +134,20 @@ class Scheduler implements Runnable,SchedulingMethod{
     }
     public void run()
     {     
-        //SJFScheduling();
-        roudRobinScheduling();
+        switch(SCHEDULING_METHOD)
+        {
+            case FIFO : FIFOScheduling();
+                        break;
+                
+            case SJF : SJFScheduling();
+                        break;
+              
+            case ROUND_ROBBIN : RoudRobinScheduling();
+                         break;
+           
+            default : break;
+        }
+       
     }
     
     
@@ -224,18 +240,34 @@ public class SchedulingAlgos {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        MiniProcess mp1 = new MiniProcess("Thread1",0,5);
-        MiniProcess mp2 = new MiniProcess("Thread2",6,1);
-        MiniProcess mp3 = new MiniProcess("Thread3",14,4);
-        
+ 
         ArrayList<MiniProcess> processList = new ArrayList<MiniProcess>();
-        processList.add(mp1);
-        processList.add(mp2);
-        processList.add(mp3);
+     
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the number of process :"); 
+        int processCount = sc.nextInt();
         
-        Scheduler sc1 = new Scheduler(processList);
+        for(int i =0;i<processCount;i++)
+        {
+            System.out.println("Enter the arrivalTime for process :"+(i+1));
+            int arrivalTime = sc.nextInt();
+            System.out.println("Enter the executionTime for process :"+(i+1));
+            int executionTime = sc.nextInt();
+            
+            processList.add(new MiniProcess("Thread"+(i+1),arrivalTime,executionTime));
+        }
+        System.out.println("Enter Scheduling Scheme : 0:FIFO,1:SJF,2:RoundRobin");
+        int schedulingScheme = sc.nextInt();
+        int slotTime =0;
+        if(schedulingScheme == 2)
+        {
+          System.out.println("Enter Slot time : ");          
+          slotTime = sc.nextInt();
+        }
+        Scheduler sc1 = new Scheduler(processList,schedulingScheme,slotTime);
         new Thread(sc1).start();
         
+                
     }
     
 }
